@@ -376,6 +376,36 @@ nav:hover .nav-label{display:inline;}
 .wish-reset.show{display:inline-block;}
 .wish-reset:hover{color:var(--cream);border-color:rgba(255,240,243,.3);}
 .wish-spark{position:fixed;pointer-events:none;z-index:500;animation:sparkFly .9s ease forwards;}
+
+/* ═══════════════ CUSTOMIZE PANEL ═══════════════ */
+.customize-fab{position:fixed;bottom:28px;right:28px;z-index:800;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--bright));color:white;border:none;font-size:1.3rem;cursor:pointer;box-shadow:0 6px 28px rgba(192,0,26,.5);transition:all .3s;display:flex;align-items:center;justify-content:center;}
+.customize-fab:hover{transform:scale(1.12) rotate(18deg);box-shadow:0 10px 36px rgba(192,0,26,.6);}
+.customize-fab-label{position:absolute;right:60px;background:rgba(14,0,4,.95);color:var(--pink);font-family:'Nunito',sans-serif;font-size:.78rem;padding:6px 12px;border-radius:100px;border:1px solid rgba(192,0,26,.3);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;}
+.customize-fab:hover .customize-fab-label{opacity:1;}
+
+.customize-panel{position:fixed;right:-400px;top:0;bottom:0;width:380px;max-width:95vw;background:#09000a;border-left:1px solid rgba(192,0,26,.3);z-index:750;transition:right .4s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;box-shadow:-10px 0 60px rgba(0,0,0,.6);}
+.customize-panel.open{right:0;}
+
+.cp-header{display:flex;align-items:center;justify-content:space-between;padding:22px 22px 16px;border-bottom:1px solid rgba(192,0,26,.18);position:sticky;top:0;background:#09000a;z-index:1;}
+.cp-header-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--cream);display:flex;align-items:center;gap:8px;}
+.cp-close{background:none;border:none;color:rgba(255,240,243,.35);font-size:1.8rem;cursor:pointer;line-height:1;padding:0;transition:color .2s;}
+.cp-close:hover{color:var(--pink);}
+
+.cp-body{padding:18px 22px;display:flex;flex-direction:column;gap:18px;flex:1;}
+.cp-section-label{font-family:'Nunito',sans-serif;font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,107,157,.5);margin-bottom:-8px;margin-top:4px;}
+.cp-field{display:flex;flex-direction:column;gap:5px;}
+.cp-field label{font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:600;color:var(--blush);letter-spacing:.05em;}
+.cp-field input,.cp-field textarea{background:rgba(255,255,255,.04);border:1px solid rgba(192,0,26,.22);border-radius:10px;padding:10px 13px;color:var(--cream);font-family:'Nunito',sans-serif;font-size:.92rem;outline:none;width:100%;resize:none;transition:border-color .25s,background .25s;line-height:1.5;}
+.cp-field input:focus,.cp-field textarea:focus{border-color:rgba(255,107,157,.5);background:rgba(255,255,255,.07);}
+.cp-field input::placeholder,.cp-field textarea::placeholder{color:rgba(255,240,243,.18);}
+.cp-field small{font-size:.7rem;color:rgba(255,240,243,.22);font-family:'Nunito',sans-serif;line-height:1.4;}
+.cp-divider{height:1px;background:rgba(192,0,26,.12);margin:4px 0;}
+
+.cp-footer{padding:16px 22px 24px;position:sticky;bottom:0;background:#09000a;border-top:1px solid rgba(192,0,26,.12);}
+.cp-save{width:100%;background:linear-gradient(135deg,var(--red),var(--bright));color:white;border:none;border-radius:100px;padding:13px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:.04em;}
+.cp-save:hover{box-shadow:0 6px 24px rgba(192,0,26,.5);transform:translateY(-1px);}
+.cp-toast{text-align:center;font-family:'Dancing Script',cursive;font-size:1rem;color:var(--pink);margin-top:10px;height:18px;opacity:0;transition:opacity .3s;}
+.cp-toast.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -413,7 +443,7 @@ nav:hover .nav-label{display:inline;}
   </div>
   <div class="door-msg-card" id="door-msg-card">
     <!-- ⚠️ CUSTOMIZE: Edit this message to match your delivery! -->
-    <p>Go open the front door, baby 🚪<br>I had something special sent just for you — flowers, cake, and all my love delivered right to you. 🌹🎂🖤</p>
+    <p id="door-message">Go open the front door, baby 🚪<br>I had something special sent just for you — flowers, cake, and all my love delivered right to you. 🌹🎂🖤</p>
     <small>happy 22nd birthday, my love</small>
   </div>
   <button class="door-close-btn" id="door-close-btn" onclick="closeDoor()">close ×</button>
@@ -520,7 +550,7 @@ nav:hover .nav-label{display:inline;}
   <!-- ⚠️ CUSTOMIZE: Change "My Love" to her name! -->
   <p class="hero-eyebrow">✦ with everything i have ✦</p>
   <h1 class="hero-title">Happy 22nd<br>Birthday</h1>
-  <p class="hero-script">to my love, my whole world, the love of my soul 🖤</p>
+  <p class="hero-script" id="hero-script">to my love, my whole world, the love of my soul 🖤</p>
   <p class="hero-body">This website I made just for you :3 filled with everything I want you to know, see, and feel how special you are on your special day (the loml was born).</p>
 
   <div class="scroll-cue">
@@ -559,8 +589,8 @@ nav:hover .nav-label{display:inline;}
             ></textarea>
             <div class="letter-actions">
               <!-- ⚠️ CUSTOMIZE: Change the sign-off! -->
-              <span class="letter-sig">Forever your princess, 🖤</span>
-              <button class="save-btn" onclick="saveLetter()">🖤 Save Letter</button>
+              <span class="letter-sig" id="letter-sig">Forever your princess, 🖤</span>
+              <button class="save-btn" id="letter-save-btn" onclick="saveLetter()" style="display:none;">🖤 Save Letter</button>
             </div>
           </div>
           <div class="save-toast" id="letter-toast">✨ Saved with love!</div>
@@ -603,7 +633,7 @@ nav:hover .nav-label{display:inline;}
   <div class="section-title reveal">22 Reasons I Love You</div>
   <div class="section-sub reveal">one reason for every beautiful year my lover bloomed 🌹</div>
 
-  <div class="mode-toggle reveal">
+  <div class="mode-toggle reveal" id="reasons-toggle" style="display:none;">
     <button class="mode-btn active" id="edit-btn" onclick="setMode('edit')">✏️ &nbsp;Write Your Reasons</button>
     <button class="mode-btn" id="preview-btn" onclick="setMode('preview')">🎴 &nbsp;Flip Cards</button>
   </div>
@@ -611,7 +641,7 @@ nav:hover .nav-label{display:inline;}
   <div class="edit-grid reveal" id="edit-mode"></div>
   <div class="cards-grid" id="preview-mode" style="display:none;"></div>
 
-  <div class="reasons-save reveal">
+  <div class="reasons-save reveal" id="reasons-save-div" style="display:none;">
     <button class="save-btn" onclick="saveReasons()">🖤 &nbsp;Save All 22 Reasons</button>
     <div class="save-toast" id="reasons-toast">✨ All 22 reasons saved!</div>
   </div>
@@ -664,7 +694,7 @@ nav:hover .nav-label{display:inline;}
 ═══════════════════════════════════ -->
 <section id="slots">
   <div class="section-title reveal">Love Slot Machine 🎰</div>
-  <div class="section-sub reveal">every pull is a win when it's you 💋</div>
+  <div class="section-sub reveal">every pull is a winner when it's you 💋</div>
   <div class="slot-machine reveal">
     <div class="slot-top">✦ &nbsp; COMPLIMENT MACHINE &nbsp; ✦</div>
     <div class="slot-reels">
@@ -711,14 +741,13 @@ nav:hover .nav-label{display:inline;}
 <section id="celebration">
   <div class="section-title reveal">Happy Birthday, The Love of My Soul ✨</div>
 
-  <p class="bday-verse reveal">
+  <p class="bday-verse reveal" id="bday-verse">
     You are <em>22 years</em> of magic, warmth, and everything beautiful and good<br>
     in this entire world. Thank you for being you. Thank you for being mine.<br>
     It's you for me.. in this life, the next, and even after.
   </p>
 
-  <!-- ⚠️ CUSTOMIZE: Change this final message! -->
-  <p class="final-script reveal">
+  <p class="final-script reveal" id="final-script">
     I love you more than words could ever say,<br>I pinky promise. 🖤
   </p>
 
@@ -891,6 +920,15 @@ function saveLetter() {
   localStorage.setItem('bd-letter-2024', document.getElementById('love-letter').value);
   toast('letter-toast');
 }
+// Auto-save letter while typing (debounced 1.5s)
+let letterTimer;
+document.addEventListener('DOMContentLoaded', () => {
+  const ta = document.getElementById('love-letter');
+  if (ta) ta.addEventListener('input', () => {
+    clearTimeout(letterTimer);
+    letterTimer = setTimeout(saveLetter, 1500);
+  });
+});
 
 // ── PHOTOS ──
 let photos = [];
@@ -972,7 +1010,7 @@ let reasons = [...defaultReasons];
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('bd-reasons-2024');
   if (saved) { try { reasons = JSON.parse(saved); } catch(e) {} }
-  buildEdit();
+  setMode('preview');
 });
 
 function buildEdit() {
@@ -1268,12 +1306,12 @@ const COMPLIMENTS = [
   "Your laugh is genuinely the best sound that makes my heart flutter 🖤",
   "I'm so grateful to love you and loved by you ✨",
   "I'd go through everything I've gone through if it means meeting you ✦",
-  "The way you exist just my world brighter 🌹",
+  "The way you exist just makes my world brighter 🌹",
   "You always take my breath away 💋",
   "Your heart is the biggest, warmest, most beautiful one I know 🖤",
   "You make ordinary moments feel like the best memories ✨",
   "I genuinely cannot believe I get to love you in every life 🌙",
-  "You're strength inspires me to be the best version of myself everyday ✿",
+  "Your strength inspires me to be the best version of myself everyday ✿",
   "Everything about you is something worth celebrating 🌹",
   "The best musician I've ever seen or heard (my personal fave) 🖤",
 ];
@@ -1397,6 +1435,151 @@ function resetWish() {
   document.getElementById('wish-burn-text').textContent = '';
   document.getElementById('wish-burn-text').style.color = '';
 }
+
+// ══════════════════════════════════════════
+// SECRET EDIT PANEL — press E three times
+// ══════════════════════════════════════════
+let cpOpen = false;
+let eCount = 0, eTimer;
+
+document.addEventListener('keydown', ev => {
+  if (['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+  if (ev.key.toLowerCase() !== 'e') return;
+  eCount++;
+  clearTimeout(eTimer);
+  eTimer = setTimeout(() => eCount = 0, 1400);
+  if (eCount >= 3) { eCount = 0; toggleCustomize(); }
+});
+
+function toggleCustomize() {
+  cpOpen = !cpOpen;
+  const panel = document.getElementById('customize-panel');
+  panel.classList.toggle('open', cpOpen);
+  if (cpOpen) {
+    populatePanel();
+    // reveal editing controls while panel is open
+    document.getElementById('letter-save-btn').style.display  = '';
+    document.getElementById('reasons-toggle').style.display   = '';
+    document.getElementById('reasons-save-div').style.display = '';
+    setMode('edit');
+  } else {
+    // hide again when panel closes
+    document.getElementById('letter-save-btn').style.display  = 'none';
+    document.getElementById('reasons-toggle').style.display   = 'none';
+    document.getElementById('reasons-save-div').style.display = 'none';
+    setMode('preview');
+  }
+}
+
+function populatePanel() {
+  const s = JSON.parse(localStorage.getItem('bd-customize') || '{}');
+  document.getElementById('cp-subtitle').value = s.subtitle || document.getElementById('hero-script').textContent.trim();
+  document.getElementById('cp-signoff').value  = s.signoff  || document.getElementById('letter-sig').textContent.trim();
+  document.getElementById('cp-finalmsg').value = s.finalmsg || '';
+  document.getElementById('cp-doormsg').value  = s.doormsg  || '';
+  // build reasons list
+  const list = document.getElementById('cp-reasons-list');
+  list.innerHTML = '';
+  reasons.forEach((r, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;';
+    const inp = document.createElement('input');
+    inp.style.cssText = 'flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(192,0,26,.22);border-radius:8px;padding:8px 12px;color:var(--cream);font-family:"Nunito",sans-serif;font-size:.88rem;outline:none;';
+    inp.value = r;
+    inp.placeholder = `Reason #${i+1}`;
+    inp.addEventListener('input', () => reasons[i] = inp.value);
+    const num = document.createElement('span');
+    num.style.cssText = 'font-family:"Playfair Display",serif;color:var(--red);font-size:1rem;min-width:24px;text-align:right;flex-shrink:0;';
+    num.textContent = i + 1;
+    row.appendChild(num);
+    row.appendChild(inp);
+    list.appendChild(row);
+  });
+}
+
+function saveCustomize() {
+  const subtitle = document.getElementById('cp-subtitle').value.trim();
+  const signoff  = document.getElementById('cp-signoff').value.trim();
+  const finalmsg = document.getElementById('cp-finalmsg').value.trim();
+  const doormsg  = document.getElementById('cp-doormsg').value.trim();
+  // save settings
+  localStorage.setItem('bd-customize', JSON.stringify({ subtitle, signoff, finalmsg, doormsg }));
+  // save reasons
+  localStorage.setItem('bd-reasons-2024', JSON.stringify(reasons));
+  // apply to DOM live
+  applyCustomize({ subtitle, signoff, finalmsg, doormsg });
+  buildPreview();
+  toast('cp-toast');
+  const btn = document.querySelector('.cp-save');
+  btn.textContent = '✓ &nbsp;All Saved!';
+  setTimeout(() => btn.textContent = '🖤 \u00a0 Save All Changes', 2200);
+}
+
+function applyCustomize(s) {
+  if (s.subtitle) document.getElementById('hero-script').textContent = s.subtitle;
+  if (s.signoff)  document.getElementById('letter-sig').textContent  = s.signoff;
+  if (s.finalmsg) document.getElementById('final-script').innerHTML  = s.finalmsg.replace(/\n/g,'<br>');
+  if (s.doormsg)  document.getElementById('door-message').innerHTML  = s.doormsg.replace(/\n/g,'<br>');
+}
+
+// Apply saved customizations on every page load
+window.addEventListener('load', () => {
+  const s = JSON.parse(localStorage.getItem('bd-customize') || '{}');
+  applyCustomize(s);
+});
 </script>
+<!-- SECRET EDIT PANEL — press E three times quickly to open -->
+<div class="customize-panel" id="customize-panel">
+  <div class="cp-header">
+    <span class="cp-header-title">✏️ &nbsp;Edit Mode</span>
+    <button class="cp-close" onclick="toggleCustomize()">×</button>
+  </div>
+  <div class="cp-body">
+
+    <p class="cp-section-label">— Hero —</p>
+    <div class="cp-field">
+      <label>Subtitle Line</label>
+      <input id="cp-subtitle" type="text" placeholder="to my love, my whole world 🖤">
+      <small>The italic line under the birthday title</small>
+    </div>
+
+    <div class="cp-divider"></div>
+    <p class="cp-section-label">— Letter —</p>
+    <div class="cp-field">
+      <label>Sign-off Name</label>
+      <input id="cp-signoff" type="text" placeholder="Forever yours 🖤">
+      <small>Shows at the bottom of the love letter</small>
+    </div>
+
+    <div class="cp-divider"></div>
+    <p class="cp-section-label">— Celebration —</p>
+    <div class="cp-field">
+      <label>Final Message</label>
+      <textarea id="cp-finalmsg" rows="3" placeholder="I love you more than words could ever say..."></textarea>
+      <small>The script text at the very end</small>
+    </div>
+
+    <div class="cp-divider"></div>
+    <p class="cp-section-label">— Door Surprise —</p>
+    <div class="cp-field">
+      <label>Delivery Message</label>
+      <textarea id="cp-doormsg" rows="4" placeholder="Go open the front door..."></textarea>
+      <small>Shown when she clicks 'Check your door'</small>
+    </div>
+
+    <div class="cp-divider"></div>
+    <p class="cp-section-label">— 22 Reasons —</p>
+    <div class="cp-field">
+      <label>Edit Reasons</label>
+      <div id="cp-reasons-list" style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;padding-right:4px;"></div>
+    </div>
+
+  </div>
+  <div class="cp-footer">
+    <button class="cp-save" onclick="saveCustomize()">🖤 &nbsp; Save All Changes</button>
+    <div class="cp-toast" id="cp-toast">✨ Saved!</div>
+  </div>
+</div>
+
 </body>
 </html>
