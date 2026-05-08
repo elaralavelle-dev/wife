@@ -612,7 +612,7 @@ nav:hover .nav-label{display:inline;}
   <input type="file" id="photo-input" accept="image/*" multiple style="display:none" onchange="handlePhotos(event)">
 
   <div class="upload-zone reveal">
-    <button class="upload-btn" onclick="document.getElementById('photo-input').click()">
+    <button class="upload-btn" id="photo-upload-btn" onclick="document.getElementById('photo-input').click()">
       📷 &nbsp; Add Photos
     </button>
     <div class="polaroid-grid" id="polaroid-grid">
@@ -949,8 +949,14 @@ function handlePhotos(e) {
 function renderPhotos() {
   const grid = document.getElementById('polaroid-grid');
   const empty = document.getElementById('photo-empty');
-  if (!photos.length) { empty.style.display = 'block'; return; }
+  const uploadBtn = document.getElementById('photo-upload-btn');
+  if (!photos.length) {
+    empty.style.display = 'block';
+    if (uploadBtn) uploadBtn.style.display = '';
+    return;
+  }
   empty.style.display = 'none';
+  if (uploadBtn) uploadBtn.style.display = 'none';
   grid.querySelectorAll('.polaroid').forEach(p => p.remove());
   photos.forEach((photo, i) => {
     const pol = document.createElement('div');
@@ -1461,12 +1467,14 @@ function toggleCustomize() {
     document.getElementById('letter-save-btn').style.display  = '';
     document.getElementById('reasons-toggle').style.display   = '';
     document.getElementById('reasons-save-div').style.display = '';
+    document.getElementById('photo-upload-btn').style.display = '';
     setMode('edit');
   } else {
     // hide again when panel closes
     document.getElementById('letter-save-btn').style.display  = 'none';
     document.getElementById('reasons-toggle').style.display   = 'none';
     document.getElementById('reasons-save-div').style.display = 'none';
+    if (photos.length) document.getElementById('photo-upload-btn').style.display = 'none';
     setMode('preview');
   }
 }
