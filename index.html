@@ -406,6 +406,11 @@ nav:hover .nav-label{display:inline;}
 .cp-save:hover{box-shadow:0 6px 24px rgba(192,0,26,.5);transform:translateY(-1px);}
 .cp-toast{text-align:center;font-family:'Dancing Script',cursive;font-size:1rem;color:var(--pink);margin-top:10px;height:18px;opacity:0;transition:opacity .3s;}
 .cp-toast.show{opacity:1;}
+/* ─── MUSIC PLAYER ─── */
+.music-btn{position:fixed;bottom:28px;left:28px;z-index:801;width:46px;height:46px;border-radius:50%;background:rgba(10,0,6,.88);border:1px solid rgba(192,0,26,.4);color:var(--pink);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.music-btn:hover{border-color:var(--pink);transform:scale(1.1);}
+.music-btn.playing{border-color:var(--pink);box-shadow:0 0 18px rgba(255,107,157,.35),0 4px 20px rgba(0,0,0,.4);animation:musicPulse 2s ease-in-out infinite;}
+@keyframes musicPulse{0%,100%{box-shadow:0 0 18px rgba(255,107,157,.35),0 4px 20px rgba(0,0,0,.4);}50%{box-shadow:0 0 28px rgba(255,107,157,.6),0 4px 20px rgba(0,0,0,.4);}}
 </style>
 </head>
 <body>
@@ -417,6 +422,15 @@ nav:hover .nav-label{display:inline;}
       fill="#ff6b9d" stroke="#c0001a" stroke-width="1.2"/>
   </svg>
 </div>
+
+<!--
+  ⚠️ MUSIC SETUP — two options:
+  OPTION A (easiest): Put an MP3 in the same folder as this HTML file,
+                      then change src below to just the filename e.g. src="our-song.mp3"
+  OPTION B:           Paste any direct https:// link to an audio file
+-->
+<audio id="bg-music" loop preload="auto" src=""></audio>
+<button class="music-btn" id="music-btn" onclick="toggleMusic()" title="Toggle music">🎵</button>
 
 <!-- Particles bg -->
 <div id="particles"></div>
@@ -821,6 +835,40 @@ nav:hover .nav-label{display:inline;}
      JAVASCRIPT
 ════════════════════════════════════════ -->
 <script>
+// ── BACKGROUND MUSIC ──
+const bgMusic = document.getElementById('bg-music');
+let musicPlaying = false;
+let musicStarted = false;
+
+function toggleMusic() {
+  const btn = document.getElementById('music-btn');
+  if (musicPlaying) {
+    bgMusic.pause();
+    btn.textContent = '🎵';
+    btn.classList.remove('playing');
+    musicPlaying = false;
+  } else {
+    bgMusic.play().catch(() => {});
+    btn.textContent = '🔇';
+    btn.classList.add('playing');
+    musicPlaying = true;
+  }
+}
+
+// Start music on first interaction with the page
+function startMusicOnce() {
+  if (musicStarted || !bgMusic.src || bgMusic.src === window.location.href) return;
+  musicStarted = true;
+  bgMusic.play().then(() => {
+    musicPlaying = true;
+    const btn = document.getElementById('music-btn');
+    btn.textContent = '🔇';
+    btn.classList.add('playing');
+  }).catch(() => {});
+}
+document.addEventListener('click',  startMusicOnce, { once: true });
+document.addEventListener('scroll', startMusicOnce, { once: true });
+
 // ── HEART CURSOR + TRAIL ──
 const cursor = document.getElementById('cursor');
 let lastTrail = 0;
@@ -1377,6 +1425,16 @@ function spinSlots() {
         btn.disabled = false;
         resultEl.textContent = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
         resultEl.classList.add('show');
+        // Silently snap reels back to start so next spin always has room
+        setTimeout(() => {
+          [1,2,3].forEach((rn, ri) => {
+            const r = document.getElementById(`reel${rn}`);
+            r.style.transition = 'none';
+            const reset = REEL_SYMS.length * 80;
+            r.style.transform = `translateY(-${reset}px)`;
+            reelOffsets[ri] = reset;
+          });
+        }, 400);
       }, dur * 1000 + 200);
     }
   });
