@@ -989,6 +989,8 @@ window.addEventListener('load', () => {
     if (saved) { photos = JSON.parse(saved); renderPhotos(); }
   } catch(e) {}
 });
+
+function openLightbox(src) {
   document.getElementById('lb-img').src = src;
   document.getElementById('lightbox').classList.add('open');
 }
