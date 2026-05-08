@@ -244,7 +244,7 @@ nav:hover .nav-label{display:inline;}
 
 /* the door panel that swings open */
 .door-panel{position:absolute;inset:0;background:linear-gradient(160deg,#2a000e 0%,#1a0008 50%,#220010 100%);border-radius:5px 5px 0 0;transform-origin:left center;transform:perspective(800px) rotateY(0deg);transition:transform 1.2s cubic-bezier(.4,0,.2,1);backface-visibility:hidden;}
-.door-panel.open{transform:perspective(800px) rotateY(-106deg);}
+.door-panel.open{transform:perspective(800px) rotateY(-78deg);}
 /* door details */
 .door-panel-inner{position:absolute;inset:16px;border:1px solid rgba(192,0,26,.25);border-radius:3px;}
 .door-panel-inner::before{content:'';position:absolute;inset:16px;border:1px solid rgba(192,0,26,.15);border-radius:2px;}
@@ -939,6 +939,7 @@ function handlePhotos(e) {
     const reader = new FileReader();
     reader.onload = ev => {
       photos.push({ src: ev.target.result, caption: '' });
+      savePhotos();
       renderPhotos();
     };
     reader.readAsDataURL(file);
@@ -965,7 +966,7 @@ function renderPhotos() {
     pol.innerHTML = `
       <button class="pol-delete" onclick="deletePhoto(${i})" title="Remove">×</button>
       <img src="${photo.src}" alt="Memory ${i+1}" onclick="openLightbox('${photo.src}')">
-      <input class="pol-caption" placeholder="Add a caption ♡" value="${photo.caption}" oninput="photos[${i}].caption=this.value">
+      <input class="pol-caption" placeholder="Add a caption ♡" value="${photo.caption}" oninput="photos[${i}].caption=this.value;savePhotos()">
     `;
     grid.appendChild(pol);
   });
@@ -973,11 +974,21 @@ function renderPhotos() {
 
 function deletePhoto(i) {
   photos.splice(i, 1);
+  savePhotos();
   renderPhotos();
   if (!photos.length) document.getElementById('photo-empty').style.display = 'block';
 }
 
-function openLightbox(src) {
+function savePhotos() {
+  try { localStorage.setItem('bd-photos', JSON.stringify(photos)); } catch(e) {}
+}
+
+window.addEventListener('load', () => {
+  try {
+    const saved = localStorage.getItem('bd-photos');
+    if (saved) { photos = JSON.parse(saved); renderPhotos(); }
+  } catch(e) {}
+});
   document.getElementById('lb-img').src = src;
   document.getElementById('lightbox').classList.add('open');
 }
